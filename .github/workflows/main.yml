@@ -1,34 +1,23 @@
 name: Build APK with Buildozer
 on:
- push:
-   branches: [ "main" ]
- workflow_dispatch:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Build APK with Docker
+        uses: addnab/docker-run-action@v3
         with:
-          python-version: '3.10'
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential ccache git libffi-dev libssl-dev python3-dev zip unzip openjdk-17-jdk
-          pip install --upgrade pip
-          pip install buildozer cython
-      - name: Accept Android SDK licenses
-       run: |
-         mkdir -p ~/.android
-         touch ~/.android/repositories.cfg
-         yes | buildozer android update || true
-     - name: Build APK
-       run: |
-         buildozer android debug
-     - name: Upload APK artifact
-       uses: actions/upload-artifact@v4
-       with:
-        name: package-apk
-        path: bin/*.apk
+          image: kivy/buildozer:latest
+          options: -v ${{ github.workspace }}:/home/user/hostpython
+          run: |
+            buildozer android debug
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: package-apk
+          path: bin/*.apkname: Build APK with Buildozer
