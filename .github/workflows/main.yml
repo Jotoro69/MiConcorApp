@@ -12,13 +12,16 @@ jobs:
       - name: Build APK with Docker
         uses: addnab/docker-run-action@v3
         with:
-          image: kivy/buildozer:latest
+          image: ghcr.io/kivy/buildozer:master
           options: -v ${{ github.workspace }}:/home/user/hostpython
           directory: /home/user/hostpython
           run: |
             buildozer android debug
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
-        with:
+            - name: Upload APK artifact
+              uses: actions/upload-artifact@v4
+              with:
+                name: package-apk
+                path: bin/*.apk
+                                path: bin/*.apk     - name: Upload APK artifact              uses: actions/upload-artifact@v4        with:
           name: package-apk
           path: bin/*.apk
